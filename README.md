@@ -1,6 +1,6 @@
 ## Installing MongoDB 7 for Component Pack 9
 
-Please refer to the [documentation](https://opensource.hcltechsw.com/connections-doc/v8-cr9/admin/install/installing_mongodb_7_for_component_pack_9.html) to build and install MongoDB 7 for Component Pack 9.
+Please refer to the [documentation](https://opensource.hcltechsw.com/connections-doc/v8-cr9/admin/install/installing_mongodb_7_for_component_pack_8.html) to build and install MongoDB 7 for Component Pack 9.
 
 ## Migrate MongoDB 5 data to MongoDB 7
 
