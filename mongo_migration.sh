@@ -53,8 +53,19 @@ stop_and_remove_container() {
     local container_name="$1"
     local timeout="${2:-30}"  # Default timeout is 30 seconds
 
+    # Print MongoDB logs before shutting down the container
+    log_info "Fetching logs for container: $container_name before stopping"
+    docker logs "$container_name" --tail 5  # Display last 5 lines of logs
+
+    # Wait for MongoDB to complete its shutdown and replication
     log_info "Stopping container: $container_name with timeout: $timeout seconds"
     docker stop --time "$timeout" "$container_name"
+
+    # Display final logs after the stop command (optional)
+    log_info "Fetching final logs after stopping container: $container_name"
+    docker logs "$container_name" --tail 5  # Display last 5 lines of logs
+
+    # Removing the container
     log_info "Removing container: $container_name"
     docker rm "$container_name"
 }
@@ -187,7 +198,8 @@ hostname_array=($(docker exec "mongo-get-host-name" mongosh --quiet --eval "rs.c
 hostname_array=($(printf "%s\n" "${hostname_array[@]}" | sort))
 log_info "Detected hostnames: ${hostname_array[@]}"
 
-docker stop "mongo-get-host-name" && docker rm "mongo-get-host-name"
+# Use the stop_and_remove_container function to stop and remove the temporary container
+stop_and_remove_container "mongo-get-host-name"
 
 # Step 2: Start MongoDB containers and map hostnames to container names
 for i in "${!hostname_array[@]}"; do
