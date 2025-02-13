@@ -160,8 +160,8 @@ init_replica_set() {
         wait_for_mongo "$cname"
     done
 
-   for i in $(seq 1 $((${#hostname_array[@]} - 1))); do
-         # Add the secondary nodes to the replica set
+    for i in $(seq 1 $((${#hostname_array[@]} - 1))); do
+        # Add the secondary node to the replica set
         log_info "Adding secondary node to the replica set..."
         MONGO_HOST=$(construct_hostname "${hostname_array[$i]%:*}")
         cname="mongo-$i"
