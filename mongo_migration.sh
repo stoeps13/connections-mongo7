@@ -153,28 +153,27 @@ init_replica_set() {
     log_info "Primary node is fully ready."
 
     # Start the secondary containers for MongoDB 7.0
-    for i in {1..2}; do
+    for i in $(seq 1 $((${#hostname_array[@]} - 1))); do
         cname="mongo-$i"
         MONGO_HOST=$(construct_hostname "${hostname_array[$i]%:*}")
         start_container "$cname" "${MONGO_HOST}" "$((HOST_PORT_BASE + i))" "$NFS_ROOT/mongo7-node-$i/data/db" "docker.io/bitnami/mongodb:7.0"
         wait_for_mongo "$cname"
     done
 
-    # Add the secondary nodes to the replica set
-    log_info "Adding secondary nodes to the replica set..."
-    for i in {1..2}; do
+    for i in $(seq 1 $((${#hostname_array[@]} - 1))); do
+        # Add the secondary node to the replica set
+        log_info "Adding secondary node to the replica set..."
         MONGO_HOST=$(construct_hostname "${hostname_array[$i]%:*}")
         cname="mongo-$i"
         docker exec "$primary_cname" mongosh --quiet --eval "rs.add('${MONGO_HOST}:27017')"
+        log_info "Secondary node added to the replica set."
     done
-    log_info "Secondary nodes added to the replica set."
 
     # Wait for all members to be ready
-    wait_for_all_members_ready "$primary_cname" 3
+    wait_for_all_members_ready "$primary_cname" "${#hostname_array[@]}"
 
     # Step 8: Print replica set information
     print_replica_set_info "$primary_cname"
-
 
     # Step 9: Stop and remove all the containers
     for i in "${!hostname_array[@]}"; do
