@@ -52,7 +52,7 @@ wait_for_mongo() {
 stop_and_remove_container() {
     local container_name="$1"
     local timeout="${2:-30}"  # Default timeout is 30 seconds
-    
+
     # Print MongoDB logs before shutting down the container
     log_info "Fetching logs for container: $container_name before stopping"
     docker logs "$container_name" --tail 5  # Display last 5 lines of logs
@@ -60,7 +60,7 @@ stop_and_remove_container() {
     # Wait for MongoDB to complete its shutdown and replication
     log_info "Stopping container: $container_name with timeout: $timeout seconds"
     docker stop --time "$timeout" "$container_name"
-    
+
     # Display final logs after the stop command (optional)
     log_info "Fetching final logs after stopping container: $container_name"
     docker logs "$container_name" --tail 5  # Display last 5 lines of logs
@@ -168,7 +168,6 @@ init_replica_set() {
         docker exec "$primary_cname" mongosh --quiet --eval "rs.add('${MONGO_HOST}:27017')"
         log_info "Secondary node added to the replica set."
     done
-    
 
     # Wait for all members to be ready
     wait_for_all_members_ready "$primary_cname" "${#hostname_array[@]}"
