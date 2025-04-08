@@ -23,6 +23,12 @@ NETWORK_NAME=${NETWORK_NAME:-"mongo5-network"}
 HOST_PORT_BASE=${HOST_PORT_BASE:-27010}
 CONTAINER_PORT=${CONTAINER_PORT:-27017}
 
+# Fail if mount point is not available
+if [ ! -d $NFS_ROOT/mongo7-node-0/data/db ] ; then
+  echo "No Mongo DB share in $NFS_ROOT"
+  exit 1
+fi
+
 declare -A FCV_VERSIONS=(["6.0"]="docker.io/bitnami/mongodb:6.0" ["7.0"]="docker.io/bitnami/mongodb:7.0")
 declare -A container_map
 
